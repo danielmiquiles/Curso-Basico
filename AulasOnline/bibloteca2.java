@@ -7,32 +7,67 @@ public class bibloteca2 {
 	public static void main(String[] args) {
 		String[][] livros;
 		Scanner sc = new Scanner(System.in);
-		int qtdLivros = 0, busca = 0, cad = 0, cont = 0;
-		String nome, autor, status;
+		int qtdLivros, busca, saida = 0, livrosRestantes = 0, teste = 0;
+		String nome, autor, status, titulo, resposta, verificar;
+		boolean existe = false;
 
 		System.out.println("Quantos livros tem em sua biblioteca? ");
 		qtdLivros = sc.nextInt();
+
 		livros = new String[qtdLivros][4];
 
-		cadastro(livros);
+		for (int i = 0; i < qtdLivros; i++) {
+			for (int j = 0; j < 4; j++) {
+				livros[i][j] = "";
+			}
+		}
 
+		for (int i = 0; i < qtdLivros; i++) {
+			System.out.println();
+			System.out.println(" Qual o nome do Livro? ");
+			verificar = sc.next();
+			for (int j = 0; j < livros.length; j++) {
+				if (verificar.equalsIgnoreCase(livros[i][0])) {
+					existe = true;
+				}
+			}
+			if (existe == true) {
+				System.out.println();
+				System.out.println(" Livro já cadastrado");
+				i--;
+				existe = false;
+			} else {
+				titulo = verificar;
+				System.out.println(" Qual o autor do livro " + titulo + " ?");
+				autor = sc.next();
+
+				System.out.println(" Qual o status do livro " + titulo + " ?");
+				status = sc.next();
+
+				livros[i][0] = titulo.toUpperCase();
+				livros[i][1] = autor.toUpperCase();
+				livros[i][2] = status.toUpperCase();
+
+			}
+			System.out.println();
+			System.out.println(" Cadastrar mais um livro? ");
+			resposta = sc.next();
+			if (resposta.equalsIgnoreCase("sim")) {
+				i = i + 0;
+			} else {
+				System.out.println();
+				System.out.println(" Você ainda pode cadastrar " + (qtdLivros - (i + 1)) + " livros");
+				livrosRestantes = (qtdLivros - (i + 1));
+				i = qtdLivros;
+			}
+		}
 		int op = 0;
 
 		do {
 			op = gerarMenu();
 			if (op == 1) {
 				System.out.println(" -- Procurar Livro -- ");
-				do {
-					busca = menuProcurar();
-					if (busca == 1) {
-						procurarportitulo(livros);
-					} else if (busca == 2) {
-						procurarporautor(livros);
-					} else if (busca == 3) {
-						verdisponiveis(livros);
-					}
 
-				} while (busca != 4);
 			} else if (op == 2) {
 				System.out.println("-- Emprestar Livro -- ");
 				livros = emprestar(livros);
@@ -42,6 +77,9 @@ public class bibloteca2 {
 			} else if (op == 4) {
 				System.out.println("-- Ver todos os Livros --");
 				verlivros(livros);
+			} else if (op == 5) {
+				System.out.println("-- Cadastrar Livro --");
+				cadastro();
 			} else if (op == 0) {
 				System.out.println(" SAINDO ");
 			} else {
@@ -56,11 +94,12 @@ public class bibloteca2 {
 		Scanner sc = new Scanner(System.in);
 
 		System.out.println("-------Menu------");
-		System.out.println(" 1 -- Procurar Livro ");
-		System.out.println(" 2 -- Emprestar Livro ");
-		System.out.println(" 3 -- Devolver Livro ");
-		System.out.println(" 4 -- Ver todos os Livros ");
-		System.out.println(" 0 -- SAIR ");
+		System.out.println(" 1 -- Procurar Livro. ");
+		System.out.println(" 2 -- Emprestar Livro. ");
+		System.out.println(" 3 -- Devolver Livro. ");
+		System.out.println(" 4 -- Ver todos os Livros. ");
+		System.out.println(" 5-- Cadastrar Livro. ");
+		System.out.println(" 0 -- SAIR. ");
 		int op = sc.nextInt();
 		return op;
 
@@ -71,17 +110,22 @@ public class bibloteca2 {
 															// na biblioteca.
 
 		Scanner sc = new Scanner(System.in);
-		String busca;
+		int busca;
 
-		System.out.println("\n");
-		System.out.println("Qual o nome do Livro? ");
-		busca = sc.next();
-
-		for (int i = 0; i < livros.length; i++) {
-			if (livros[i][0].equalsIgnoreCase(busca)) {
+		do {
+			busca = menuProcurar();
+			if (busca == 1) {
+				procurarportitulo(livros);
+			} else if (busca == 2) {
+				procurarporautor(livros);
+			} else if (busca == 3) {
+				verdisponiveis(livros);
+			} else {
+				System.out.println();
+				System.out.println(" Opção invalida ");
 			}
 
-		}
+		} while (busca != 4);
 
 	}
 
@@ -90,32 +134,35 @@ public class bibloteca2 {
 															// na bibioteca.
 		Scanner sc = new Scanner(System.in);
 		String busca, locatario;
-		int cont = 1;
+		int contLivros = 0, posiçao = 0;
+		boolean existe = false;
+		
 		System.out.println("\n");
-		System.out.println("Digite o nome do livro ");
+		System.out.println(" Seu nome, por favor");
+		locatario = sc.next();
+		
+		
+		System.out.println("\n");
+		System.out.println(" Digite o nome do livro ");
 		busca = sc.next();
 
 		for (int i = 0; i < livros.length; i++) {
+			if (livros[i][3].equalsIgnoreCase(locatario)) {
+				contLivros++;
+			}
+		}
+
+		for (int i = 0; i < livros.length; i++) {
 			if (livros[i][0].equalsIgnoreCase(busca)) {
-				if (livros[i][2].equalsIgnoreCase("EMPRESTADO")) {
-					System.out.println(" Livro Emprestado!! Escolha outro!!");
-
-				} else {
-					System.out.println(" Digite seu nome ");
-					locatario = sc.next();
-					livros[i][3] = locatario.toUpperCase();
-					livros[i][2] = "EMPRESTADO";
-					System.out.println(" Livro Emprestado!! \0/ \n");
-					cont++;
-
-				}
-				return livros;
+				existe = true;
+				posiçao=i;
 
 			}
 
 		}
-		System.out.println(" Livro não Encontrado ");
-		return livros;
+		if (existe==true) {
+			
+		}
 
 	}
 
@@ -216,22 +263,13 @@ public class bibloteca2 {
 		}
 	}
 
-	public static int quantidadeDeLivros(String[][] livros) {
-		int cont = 0;
-		for (int i = 0; i < livros.length; i++) {
-			if (livros[i][0] != null) {
-				cont++;
-			} else {
-				i = livros.length;
-			}
-		}
-		return cont;
-	}
-
-	public static void cadastro(String[][] livros) {
+	public static void cadastro(String[][] livros, int qtdLivros, String nome, String autor, String status, int resto) {
 		Scanner sc = new Scanner(System.in);
-		String nome = null, autor, status, op2;
-		int qtdLivros = 0, cont = 0;
+		String op2;
+		int cont = 0;
+
+		resto = qtdLivros - 1;
+
 		for (int i = 0; i < livros.length; i++) {
 
 			do {
@@ -251,10 +289,11 @@ public class bibloteca2 {
 					System.out.println();
 					System.out.println(" LIVRO CADASTRADO COM SUCESSO.");
 					System.out.println();
-					System.out.println(" Você ainda pode cadastrar " + (qtdLivros - 1) + " livros ");
+					System.out.println(" Você ainda pode cadastrar " + (resto) + " livros ");
 					System.out.println();
-
 					cont++;
+					resto--;
+
 					livros[i][0] = nome.toUpperCase();
 					livros[i][1] = autor.toUpperCase();
 					livros[i][2] = status.toUpperCase();
