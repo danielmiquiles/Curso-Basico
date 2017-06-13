@@ -5,313 +5,403 @@ import java.util.Scanner;
 public class bibloteca2 {
 
 	public static void main(String[] args) {
-		String[][] livros;
-		Scanner sc = new Scanner(System.in);
-		int qtdLivros, busca, saida = 0, livrosRestantes = 0, teste = 0;
-		String nome, autor, status, titulo, resposta, verificar;
-		boolean existe = false;
 
-		System.out.println("Quantos livros tem em sua biblioteca? ");
-		qtdLivros = sc.nextInt();
+		Scanner sc= new Scanner(System.in);
+		String nome, autor, status,nomes;
+		int escolha;
+		
+		System.out.println("Digite a quantidade maxima de livros:");
+		int quantidade= sc.nextInt();
+		System.out.println("Ok! Escolha 1 para cadastrar os livros!");
+		String [][]livros= new String[quantidade][4];
+		
+		menu();
+		escolha = sc.nextInt();
 
-		livros = new String[qtdLivros][4];
+		while(escolha != 0){	
 
-		for (int i = 0; i < qtdLivros; i++) {
-			for (int j = 0; j < 4; j++) {
-				livros[i][j] = "";
+			if(escolha == 1){
+				Cadastrar(livros);
 			}
-		}
+			else if(escolha == 2){
+				MenuProcurar(livros);
+			}
+			else if(escolha == 3){
+				EmprestarLivro(livros);
+			}
+			else if(escolha == 4){
+				VerTodosOsLivros(livros);
+			}	
+			else if(escolha == 5){
+				DevolverLivro(livros);
+			}
+			else if(escolha == 6){
+				ImprimirRelatorio(livros);
+			
+			}else{
+				System.out.println("ERRO. Escolha novamente");
+			}
+			menu();
+			escolha=sc.nextInt();
+			System.out.println("");
 
-		for (int i = 0; i < qtdLivros; i++) {
-			System.out.println();
-			System.out.println(" Qual o nome do Livro? ");
-			verificar = sc.next();
-			for (int j = 0; j < livros.length; j++) {
-				if (verificar.equalsIgnoreCase(livros[i][0])) {
-					existe = true;
+		}
+		if(escolha == 0){
+			System.out.println("Você saiu do programa");
+		} 
+	}
+
+	//----------------------------------------------------------------------------------------------------------------------------------
+
+	public static void menu(){
+
+		System.out.println("");
+		System.out.println("");
+		System.out.println("----Escolha uma das opções----");
+		System.out.println("");
+		System.out.println("1- Cadastrar livros");
+		System.out.println("2- Procurar livro");
+		System.out.println("3- Emprestar livro");
+		System.out.println("4- Ver todos os livros");
+		System.out.println("5- Devolver");
+		System.out.println("6- Imprimir relatório");
+		System.out.println("0- SAIR");
+		System.out.flush();
+	}	
+	//-----------------------------------------------------------------------------------------------------------------------------------
+	public static int MenuProcurar(String[][]livros){
+		Scanner sc= new Scanner(System.in);
+
+		System.out.println("Selecione a opçao que deseja procurar: ");
+		System.out.println("\n1- Procurar Titulo \n2- Procurar por autor \n3- Exibir todos os disponiveis");
+		int opcao= sc.nextInt();
+
+		if(opcao ==1){
+			ProcurarTitulo(livros);
+
+		}else if(opcao ==2){
+			ProcurarAutor(livros);
+
+		}else if(opcao ==3){
+			ExibirDisponiveis(livros);
+		}
+		return opcao;
+	}
+
+	//------------------------------------------------------------------------------------------------------------------------------------
+
+	public static String[][] EmprestarLivro(String[][]livros){	
+		Scanner sc = new Scanner(System.in);
+		String busca, nomeP;
+		boolean encontrou = false;
+		int posicao = 0;
+		int qntEmprestimo = 0;
+		
+		System.out.println("Informe o nome do livro: ");
+		busca = sc.next();
+		
+		System.out.println("Informe seu nome: ");
+		nomeP = sc.next();
+		
+		
+		for(int i=0; i<livros.length; i++) {
+			if(livros[i][0] != null){
+				if(livros[i][0].equalsIgnoreCase(busca)) {
+					encontrou = true;
+					posicao=i;
 				}
 			}
-			if (existe == true) {
-				System.out.println();
-				System.out.println(" Livro já cadastrado");
-				i--;
-				existe = false;
-			} else {
-				titulo = verificar;
-				System.out.println(" Qual o autor do livro " + titulo + " ?");
-				autor = sc.next();
-
-				System.out.println(" Qual o status do livro " + titulo + " ?");
-				status = sc.next();
-
-				livros[i][0] = titulo.toUpperCase();
-				livros[i][1] = autor.toUpperCase();
-				livros[i][2] = status.toUpperCase();
-
-			}
-			System.out.println();
-			System.out.println(" Cadastrar mais um livro? ");
-			resposta = sc.next();
-			if (resposta.equalsIgnoreCase("sim")) {
-				i = i + 0;
-			} else {
-				System.out.println();
-				System.out.println(" Você ainda pode cadastrar " + (qtdLivros - (i + 1)) + " livros");
-				livrosRestantes = (qtdLivros - (i + 1));
-				i = qtdLivros;
+		}
+		for(int i=0; i<livros.length; i++) {
+			if(livros[i][3]!= null){
+			if(livros[i][3].equalsIgnoreCase(nomeP)) {
+				qntEmprestimo++;
 			}
 		}
-		int op = 0;
-
-		do {
-			op = gerarMenu();
-			if (op == 1) {
-				System.out.println(" -- Procurar Livro -- ");
-
-			} else if (op == 2) {
-				System.out.println("-- Emprestar Livro -- ");
-				livros = emprestar(livros);
-			} else if (op == 3) {
-				System.out.println("-- Devolver Livro --");
-				livros = devolver(livros);
-			} else if (op == 4) {
-				System.out.println("-- Ver todos os Livros --");
-				verlivros(livros);
-			} else if (op == 5) {
-				System.out.println("-- Cadastrar Livro --");
-				cadastro();
-			} else if (op == 0) {
-				System.out.println(" SAINDO ");
-			} else {
-				System.out.println(" Opção Incorreta, tente novamente!! ");
-			}
-
-		} while (op != 0);
-
 	}
-
-	public static int gerarMenu() { // Função do Menu.
-		Scanner sc = new Scanner(System.in);
-
-		System.out.println("-------Menu------");
-		System.out.println(" 1 -- Procurar Livro. ");
-		System.out.println(" 2 -- Emprestar Livro. ");
-		System.out.println(" 3 -- Devolver Livro. ");
-		System.out.println(" 4 -- Ver todos os Livros. ");
-		System.out.println(" 5-- Cadastrar Livro. ");
-		System.out.println(" 0 -- SAIR. ");
-		int op = sc.nextInt();
-		return op;
-
-	}
-
-	public static void procurarlivros(String[][] livros) { // Método para
-															// procurar livros
-															// na biblioteca.
-
-		Scanner sc = new Scanner(System.in);
-		int busca;
-
-		do {
-			busca = menuProcurar();
-			if (busca == 1) {
-				procurarportitulo(livros);
-			} else if (busca == 2) {
-				procurarporautor(livros);
-			} else if (busca == 3) {
-				verdisponiveis(livros);
-			} else {
-				System.out.println();
-				System.out.println(" Opção invalida ");
-			}
-
-		} while (busca != 4);
-
-	}
-
-	public static String[][] emprestar(String[][] livros) { // Método para
-															// emprestar livros
-															// na bibioteca.
-		Scanner sc = new Scanner(System.in);
-		String busca, locatario;
-		int contLivros = 0, posiçao = 0;
-		boolean existe = false;
 		
-		System.out.println("\n");
-		System.out.println(" Seu nome, por favor");
-		locatario = sc.next();
-		
-		
-		System.out.println("\n");
-		System.out.println(" Digite o nome do livro ");
-		busca = sc.next();
-
-		for (int i = 0; i < livros.length; i++) {
-			if (livros[i][3].equalsIgnoreCase(locatario)) {
-				contLivros++;
-			}
-		}
-
-		for (int i = 0; i < livros.length; i++) {
-			if (livros[i][0].equalsIgnoreCase(busca)) {
-				existe = true;
-				posiçao=i;
-
-			}
-
-		}
-		if (existe==true) {
+		if(encontrou == true) {
+			if(livros[posicao][2].equalsIgnoreCase("EMPRESTADO")){
+				System.out.println("Livro INDISPONIVEL no momento.");
+				
+				}
+				
+				if(livros[posicao][2].equalsIgnoreCase("DISPONIVEL") && qntEmprestimo < 3){
+					livros[posicao][2] = "EMPRESTADO";
+					livros[posicao][3] = nomeP.toUpperCase();
+				
+				System.out.println("");
+				System.out.println("Livro alugado com sucesso! Favor, pegar na recepção!");
+				
+				}
 			
+				if(livros[posicao][2].equalsIgnoreCase("DISPONIVEL") && qntEmprestimo == 3){
+				System.out.println("Ops! Você atingiu o limite de livros!");
+				
+				}
 		}
-
-	}
-
-	public static String[][] devolver(String[][] livros) {
-		Scanner sc = new Scanner(System.in);
-		String busca;
-		int cont = 0;
-		System.out.println("\n");
-		System.out.println("Digite o nome do livro ");
-		busca = sc.next();
-
-		for (int i = 0; i < livros.length; i++) {
-			if (livros[i][0].equalsIgnoreCase(busca)) {
-				if (livros[i][2].equalsIgnoreCase("DISPONIVEL")) {
-					System.out.println("Livro já DISPONIVEL");
-
-				} else {
-
-					livros[i][2] = "DISPONIVEL";
-					livros[i][3] = "VAZIO";
-					System.out.println(" Livro Devolvido");
-					cont--;
+				
+				
+			if(encontrou == false){
+				System.out.println("Esse livro não existe");
 				}
 				return livros;
+			}		
 
+	//------------------------------------------------------------------------------------------------------------------------------------------------
+
+	public static String[][] DevolverLivro(String[][]livros){
+		Scanner sc= new Scanner(System.in);
+		boolean encontrou= false;
+		boolean encontrou2= false;
+		int posicao=0;
+		int qntEmprestimo=0;
+
+		System.out.println("Informe o nome do livro: ");
+		String busca= sc.next();
+		
+		System.out.println("Informe seu nome:");
+		String nomeP= sc.next();
+		
+		for(int i=0; i<livros.length; ++i){
+			if(livros[i][0] != null){
+			if(livros[i][0].equalsIgnoreCase(busca)){
+				encontrou= true;
+				posicao=i;
 			}
-
-		}
-		System.out.println(" Livro não encontardo");
-		return livros;
-
-	}
-
-	public static void verlivros(String[][] livros) {
-		for (int i = 0; i < livros.length; i++) {
-			System.out.println("Nome\t" + livros[i][0] + " Autor\t" + livros[i][1] + " Status\t" + livros[i][2]
-					+ " locatario\t" + livros[i][3]);
-		}
-
-	}
-
-	public static int menuProcurar() {
-		Scanner sc = new Scanner(System.in);
-
-		System.out.println(" 1-- Procurar por  Titulo ");
-		System.out.println(" 2-- Procurar por Autor ");
-		System.out.println(" 3-- Mostrar todos os disponiveis ");
-		System.out.println(" 4-- Sair ");
-		int busca = sc.nextInt();
-
-		return busca;
-
-	}
-
-	public static void procurarportitulo(String[][] livros) {
-		Scanner sc = new Scanner(System.in);
-		String busca;
-
-		System.out.println("\n");
-		System.out.println("Qual o nome do livro? ");
-		busca = sc.next();
-
-		for (int i = 0; i < livros.length; i++) {
-			if (livros[i][0].equalsIgnoreCase(busca)) {
-				System.out.println("Nome \t" + livros[i][0] + " Autor \t" + livros[i][1] + " Status \t" + livros[i][2]
-						+ " locatario \t" + livros[i][3]);
 			}
 		}
-		System.out.println("Nome incorreto!! Tente novamente.");
-	}
-
-	public static void procurarporautor(String[][] livros) {
-		Scanner sc = new Scanner(System.in);
-		String busca;
-
-		System.out.println("\n");
-		System.out.println("Qual o autor do livro? ");
-		busca = sc.next();
-
-		for (int i = 0; i < livros.length; i++) {
-			if (livros[i][1].equalsIgnoreCase(busca)) {
-				System.out.println("Nome \t" + livros[i][0] + " Autor \t" + livros[i][1] + " Status \t" + livros[i][2]
-						+ " locatario \t" + livros[i][3]);
-
+		for(int i=0; i<livros.length; ++i){
+			if(livros[i][3] != null){
+			if(livros[i][3].equalsIgnoreCase(nomeP)){
+				encontrou2= true;
 			}
-
-		}
-		System.out.println("Autor incorreto!! Tente Novamente.");
-	}
-
-	public static void verdisponiveis(String[][] livros) {
-
-		for (int i = 0; i < livros.length; i++) {
-			if (livros[i][2].equalsIgnoreCase("DISPONIVEL")) {
-				System.out.println("Nome\t" + livros[i][0] + " Autor\t" + livros[i][1] + " Status\t" + livros[i][2]
-						+ " locatario\t" + livros[i][3]);
 			}
 		}
-	}
-
-	public static void cadastro(String[][] livros, int qtdLivros, String nome, String autor, String status, int resto) {
-		Scanner sc = new Scanner(System.in);
-		String op2;
-		int cont = 0;
-
-		resto = qtdLivros - 1;
-
-		for (int i = 0; i < livros.length; i++) {
-
-			do {
-				System.out.println(" Deseja cadastrar mais um livro?");
-				System.out.println(" SIM ");
-				System.out.println(" NAO ");
-				op2 = sc.next();
-				System.out.println();
-				if (op2.equalsIgnoreCase("SIM")) {
-					System.out.println(" Vamos ao cadastro \n");
-					System.out.println(" Nome do livro ");
-					nome = sc.next();
-					System.out.println(" Informe o nome do Autor: ");
-					autor = sc.next();
-					System.out.println(" Informe o status: ");
-					status = sc.next();
-					System.out.println();
-					System.out.println(" LIVRO CADASTRADO COM SUCESSO.");
-					System.out.println();
-					System.out.println(" Você ainda pode cadastrar " + (resto) + " livros ");
-					System.out.println();
-					cont++;
-					resto--;
-
-					livros[i][0] = nome.toUpperCase();
-					livros[i][1] = autor.toUpperCase();
-					livros[i][2] = status.toUpperCase();
-				} else if (op2.equalsIgnoreCase("nao")) {
-					if (cont == 0) {
-						System.out.println(" CADASTRE PELO MENOS UM LIVRO NA BIBLITECA");
-						System.out.println();
-					}
-				} else if (nome.equalsIgnoreCase(livros[i][0])) {
-					System.out.println(" Livro já cadastrado. Informe outro livro");
+		
+		
+		if(encontrou== true && encontrou2== true){
+			if(livros[posicao][2] != null){
+				
+				if(livros[posicao][2].equalsIgnoreCase("DISPONIVEL")){
+					System.out.println("Ops! Você NÃO alugou esse livro! Ele encontrasse DISPONIVEL na biblioteca.");
 				}
-
-			} while (cont <= qtdLivros);
+			if(livros[posicao][2].equalsIgnoreCase("EMPRESTADO")){
+		System.out.println("O livro " + livros[posicao][0] + " foi devolvido com sucesso! ");
+		livros[posicao][2]= "DISPONIVEL";
+		livros[posicao][3] = " ";
+		
 		}
-		if (cont >= qtdLivros) {
-			System.out.println(" Biblioteca na capacidade maxima, você não pode mais cadastrar livros.");
-
+			
+			}
+		}	
+		else if(encontrou== false){
+			System.out.println("Livro não cadastrado na biblioteca! ");
 		}
+		else if(encontrou= true && encontrou2== false){
+			System.out.println("Pessoa não cadastrada! ");
+		}
+		
+		return livros;
 	}
 
+	//--------------------------------------------------------------------------------------------------------------------------------------------------
+
+	public static void VerTodosOsLivros(String[][]livros){
+
+		for(int i=0; i<livros.length; ++i){
+			if(livros[i][0] != null){
+			System.out.println("LIVRO: " + livros[i][0]);
+			System.out.println("AUTOR: " + livros[i][1]);
+			System.out.println("STATUS: " + livros[i][2]);
+				if(livros[i][2].equalsIgnoreCase("EMPRESTADO")){
+					System.out.println("Emprestado a " + livros[i][3]);
+				}
+			}
+		}
+	}
+	//---------------------------------------------------------------------------------------------------------------------------------------------------			
+	//PROCURANDO...
+
+	public static void ProcurarTitulo(String[][]livros){
+		Scanner sc= new Scanner(System.in);
+		
+		System.out.println("Informe o título do livro: ");
+		String busca= sc.next();
+		int posicao=0;
+		boolean encontrou = false;
+
+		for(int i=0; i< livros.length; i++){
+			if(livros[i][0] != null){
+			if(livros[i][0]. equalsIgnoreCase(busca)){
+				encontrou = true;
+				posicao=i;
+			}
+			}
+		}
+		if(encontrou == true){
+			System.out.println("TITULO: " + livros[posicao][0]);
+			System.out.println("AUTOR: " + livros[posicao][1]);
+			System.out.println("STATUS: " + livros[posicao][2]);
+			if(livros[posicao][2].equalsIgnoreCase("EMPRESTADO")){
+				if(livros[posicao][3] != null){
+					System.out.println("(Emprestado a " + livros[posicao][3] + ")");
+				}
+			}
+		}
+		
+		if(encontrou == false) {
+			System.out.println("Livro não cadastrado na biblioteca!");
+		}
+		
+	}
+
+	public static void ProcurarAutor(String[][]livros){
+		Scanner sc= new Scanner(System.in);
+		boolean encontrou= false;
+		int posicao=0;
+		int cont=0;
+		
+		System.out.println("Digite o nome do autor: ");
+		String nomeAutor= sc.next();
+
+		for(int i=0; i<livros.length; ++i){
+			if(livros[i][1] != null){
+			if(livros[i][1].equalsIgnoreCase(nomeAutor)){
+				encontrou= true;
+				posicao=i;
+				System.out.println("");
+				System.out.println("AUTOR: " + nomeAutor );
+				System.out.println("LIVRO: " + livros[posicao][0]);
+				System.out.println("STATUS: " + livros[posicao][2]);
+				if(livros[i][2].equalsIgnoreCase("EMPRESTADO")){
+					if(livros[i][3] != null)
+					System.out.println("(Emprestado a " + livros[i][3] + ")");
+				}
+			}else{
+				++cont;
+			}
+			} encontrou=false;
+		}
+		
+		if(cont==livros.length){
+			System.out.println("Não encontramos nenhum livro com esse Autor!!");
+		}
+	}
+	
+	public static void ExibirDisponiveis(String[][]livros){
+		Scanner sc= new Scanner(System.in);
+		boolean encontrou=false;
+		int posicao=0;
+		System.out.println("Livros DISPONIVEIS: ");
+		System.out.println("");
+
+		for(int i=0; i<livros.length; ++i){
+			if(livros[i][2] != null){
+			if(livros[i][2].equalsIgnoreCase("DISPONIVEL")){
+				encontrou=true;
+				posicao=i;
+			}
+			}
+		}
+		if(encontrou=true){
+			for(int i=0; i<livros.length; ++i){
+				if(livros[i][2] != null){
+				if(livros[i][2].equalsIgnoreCase("DISPONIVEL")){
+				System.out.println("-" + livros[i][0] + "\t- " + livros[i][1]);
+			}
+			}
+		}
+
+		}else{
+		System.out.println("Não há livros DISPONIVEIS");
+	}
 }
+//-------------------------------------------------------------------------------------------------------------------------------------------
+	
+	public static String[][] Cadastrar(String[][]livros){
+		Scanner sc= new Scanner(System.in);
+		String nome, autor, status;
+		String resposta = "sim";
+		int posicao = 0;	
+
+		while (posicao < livros.length && livros[posicao][0] != null) {
+			posicao++;
+		}
+		if(posicao == livros.length){
+			System.out.println("Não há mais espaço para cadastro!");
+			return livros;
+		}
+		
+		while (resposta.equalsIgnoreCase("sim")) {
+			System.out.println("Informe o nome do livro: ");
+			nome= sc.next();
+
+			for(int i=0; i<livros.length; ++i){	
+				while(nome.equalsIgnoreCase(livros[i][0])){
+					System.out.println("Esse livro já foi cadastrado! Informe outro título (ou cancelar): ");
+					nome= sc.next();
+					if (nome.equalsIgnoreCase("cancelar")) {
+						return livros;
+					}
+				}
+			}
+
+			System.out.println("Informe o autor: ");
+			autor= sc.next();
+
+			System.out.println("Informe status: ");
+			status= sc.next();
+
+			livros[posicao][0]= nome.toUpperCase();
+			livros[posicao][1]= autor.toUpperCase();
+			livros[posicao][2]= status.toUpperCase();
+
+			posicao = posicao + 1;
+			
+			if (posicao == livros.length) {
+				System.out.println("Capacidade Maxima atingida!");
+				resposta = "nao";
+			} else {
+				System.out.println("Deseja cadastrar mais um livro? (sim/nao) ");
+				resposta= sc.next();
+			}
+		}
+		
+		int restam = livros.length - posicao;
+		System.out.println("Restam " + restam + " livros a serem cadastrados.");
+
+		return livros;
+	}
+		
+//--------------------------------------------------------------------------------------------
+	public static void ImprimirRelatorio(String[][]livros){
+		int cont=0;
+		int cont2=0;
+		
+		
+		for(int i=0; i< livros.length; ++i){
+			if(livros[i][2] != null){
+			if(livros[i][2].equalsIgnoreCase("DISPONIVEL")){
+				cont++;
+				
+			}
+			else if(livros[i][2].equalsIgnoreCase("EMPRESTADO")){
+				cont2++;
+			} 
+		}
+		}
+		int livre= livros.length - (cont + cont2);
+		
+		System.out.println("Livros DISPONIVEIS: " + cont + " unidades");
+		System.out.println("Livros EMPRESTADOS: " + cont2 + " unidades");
+		System.out.println("Quantidade de livros a serem cadastrados: " + livre);
+		System.out.println("");
+	
+	
+	}	
+	
+	
+
+
+}//fechando classe.
