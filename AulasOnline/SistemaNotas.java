@@ -5,148 +5,151 @@ import java.util.Scanner;
 public class SistemaNotas {
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
-		int qtdAlunos = 0, op = 0, soma = 0;
-		String[][] nomes;
-		double[][] notas;
-		double maMedia = Integer.MIN_VALUE;
-		double meMedia = Integer.MAX_VALUE;
-		String pAluno = null;
-		String mAluno = null;
-
-		while (op != 7){
+		int qtd = 0;
+		double maior = Integer.MIN_VALUE;
+		double menor = Integer.MAX_VALUE;
+		String MaiorMedia = " ";
+		String MenorMedia = " ";
+		do {
+			System.out.print("Insira a quantidade de alunos : ");
+			qtd = sc.nextInt();
 			System.out.println();
-			System.out.println(" -- MENU --");
-			System.out.println(
-					"\n1--INFORMAR QUANTIDADE DE ALUNOS \n2--INFORMAR NOME E NOTAS DOS ALUNOS \n3--INFORMAÇÕES DOS ALUNOS \n4--ATUALIZAR NOTAS"
-							+ "\n5--MAIOR MEDIA \n6--MENOR MEDIA \n7--SAIR");
-			op = sc.nextInt();
+		} while (qtd < 1);
+
+		String[] nome = new String[qtd];
+		double[][] notas = new double[qtd][3];
+
+		for (int i = 0; i < qtd; i++) {
+
+			System.out.print("Insira o nome do aluno : ");
+			nome[i] = sc.next();
+			System.out.print("Insira a PRIMEIRA nota -> ");
+			notas[i][0] = sc.nextDouble();
+			System.out.print("Insira a SEGUNDA nota -> ");
+			notas[i][1] = sc.nextDouble();
+
+			notas[i][2] = (notas[i][0] + notas[i][1]) / 2;
+			
+			System.out.println();
+		}
+		int op = 0;
+		do {
+			System.out.println();
+			System.out.println("Insira uma das opções abaixo : ");
+			op = Menu();
 
 			if (op == 1) {
-				System.out.println(" Digite a quantidade de Alunos: ");
-				qtdAlunos = sc.nextInt();
+				ExibirAlunos(notas, nome);
+
+			} else if (op == 2) {
+				AtualizarNotas(notas, nome);
+
+			} else if (op == 3) {
+				MaiorMedia(notas, nome, maior, MaiorMedia);
+
+			} else if (op == 4) {
+				MenorMedia(notas, nome, menor, MenorMedia);
+
+			} else if (op == 0) {
+				System.out.println("Programa Encerrado!");
+				System.exit(0);
 			}
-			nomes = new String[qtdAlunos][2];
-			notas = new double[qtdAlunos][4];
 
-			if (op == 2) {
-				if (qtdAlunos == 0) {
-					System.out.println(" Digite a quantidade de alunos e suas notas.");
-				}
-				for (int i = 0; i < qtdAlunos; i++) {
-					System.out.println("  Digite o nome do " + (i + 1) + "º aluno. ");
-					nomes[i][0] = sc.next();
+		} while (op != 0);
 
-					System.out.println(" Digite a 1ª nota do aluno " + nomes[i][0]);
-					notas[i][0] = sc.nextDouble(); 
+	}
 
-					System.out.println(" Digite a 2ª nota do aluno " + nomes[i][0]);
-					notas[i][1] = sc.nextDouble();
+	public static int Menu() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println();
+		System.out.println("----------Menu-----------");
+		System.out.println("1- Exibir Alunos");
+		System.out.println("2- Atualizar nota");
+		System.out.println("3- Aluno de maior media");
+		System.out.println("4- Aluno de menor media");
+		System.out.println("0- Sair ");
 
+		int op = sc.nextInt();
+		return op;
+
+	}
+
+	public static void ExibirAlunos(double[][] notas, String[] nome) {
+		System.out.println("\t" + "Aluno" + "\t" + "Nota 1" + "\t" + "Nota 2" + "\t" + "Media" + "\t" + "Status");
+		for (int i = 0; i < notas.length; i++) {
+			if(notas[i][2] > 5){
+			System.out.println("\t" + nome[i] + "\t" + notas[i][0] + "\t" + notas[i][1] + "\t" + notas[i][2] + "\t"
+					+ "APROVADO");
+			}else if(notas[i][2] < 5){
+				System.out.println("\t" + nome[i]+ "\t" + notas[i][0] + "\t" + notas[i][1] + "\t" + notas[i][2] + "\t"
+						+ "REPROVADO");
+			}else{
+				System.out.println("Erro!");
+			}
+		}
+	}
+
+	public static double[][] AtualizarNotas(double[][] notas, String[] nome) {
+		Scanner sc = new Scanner(System.in);
+		String x;
+		int z;
+		double y;
+		System.out.println("Qual aluno que precisa ter sua nota atualizada ? ");
+		x = sc.next();
+
+		for (int i = 0; i < nome.length; i++) {
+			if (nome[i].equalsIgnoreCase(x)) {
+				System.out.println("Que nota você deseja atualizar ?");
+				System.out.println("Digite '1' para a PRIMEIRA nota! \nDigite '2' para a SEGUNDA nota!");
+				z = sc.nextInt();
+
+				switch (z) {
+
+				case 1:
+					System.out.print("Digite a nova nota : ");
+					y = sc.nextDouble();
+					notas[i][0] = y;
 					notas[i][2] = (notas[i][0] + notas[i][1]) / 2;
-					
-					nomes[i][0]=nomes[i][0].toUpperCase();
+					break;
+				case 2:
+					System.out.print("Digite a nova nota : ");
+					y = sc.nextDouble();
+					notas[i][1] = y;
+					notas[i][2] = (notas[i][0] + notas[i][1]) / 2;
+					break;
+				default:
+					System.out.println("Opção desconhecida,tente outra vez!");
+				}
 
-					if (notas[i][2] >= 5) {
-						nomes[i][1] = "APROVADO";
-					} else if (notas[i][2] < 5) {
-						nomes[i][1] = "REPROVADO";
-					}
-					if (notas[i][2]>maMedia) {
-						maMedia = notas[i][2];
-						mAluno = nomes[i][0];
-					}
-					if (notas[i][0]<meMedia) {
-						meMedia=notas[i][0];
-						pAluno=nomes[i][0];
-					}
-				}
-			}
-			if (op==3) {
-				if (qtdAlunos==0) {
-					System.out.println(" Digite a quantidade de alunos e suas notas. ");
-				}
-				exibir(notas,nomes,qtdAlunos);
-			}
-			if (op==4) {
-				if (qtdAlunos==0) {
-					System.out.println(" Digite a quantidade de alunos e suas notas. ");
-				}
-				atualizar(notas);
-			}
-			if (op==5) {
-				if (qtdAlunos==0) {
-					System.out.println(" Digite a quantidade de alunos e suas notas. ");
-				}
-				maiorMedia(nomes);
-			}
-			if (op==6) {
-				if (qtdAlunos==0) {
-					System.out.println(" Digite a quantidade de alunos e suas notas. ");
-				}
-				menorMedia(nomes);
 			}
 
-		} 
-	}
-	public static double[][] exibir(double[][]notas, String[][]nomes, int qtdAlunos){
-		
-		for (int i = 0; i < qtdAlunos; i++) {
-			
-			notas=new double[qtdAlunos][3];
-			System.out.println("Aluno(a):\t"+nomes[i][0]+" 1ª nota:\t"+notas[i][0]+" 2ª nota:\t"+notas[i][1]+" Média:\t"+notas[i][2]+" Status:\t"
-		+nomes[i][0]);
 		}
+
 		return notas;
-	
+
 	}
-public static double[][] atualizar(double[][]notas){
-	Scanner sc = new Scanner(System.in);
-	String buscanome, buscanota;
-	String[][]nomes;
-	double novanota;
-	int qtdAlunos=0;
-	
-	nomes=new String[qtdAlunos][2];
-	
-	System.out.println(" Nome do Aluno ");
-	buscanome=sc.next();
-	
-	for (int i = 0; i < notas.length; i++) {
-		
-		if (buscanome.equalsIgnoreCase(nomes[i][0])) {
-			
-			System.out.println(" Deseja atualizar a primeira nota ou a segunda? ");
-			buscanota=sc.next();
-			
-			System.out.println(" Digite a nova nota: ");
-			novanota=sc.nextDouble();
-			
-			if (buscanota.equalsIgnoreCase("primeira")) {
-				notas[i][0]=novanota;
-					} else if (buscanota.equalsIgnoreCase("segunda")) {
-						notas[i][1]=novanota;
-					}
-			notas[i][2]=(notas[i][0]+notas[i][1])/2;
-			
-			System.out.println();
-			System.out.println(" NOTAS ATUALIZADAS");
-			System.out.println("Aluno(a):\t"+nomes[i][0]+" 1ª nota:\t"+notas[i][0]+" 2ª nota:\t"+notas[i][1]+" Média:\t"+notas[i][2]+" Status:\t"
-		+nomes[i][0]);
-			
-			
+
+	public static double [][] MaiorMedia(double[][] notas, String[] nome, double maior, String MaiorMedia) {
+		for (int i = 0; i < notas.length; i++) {
+			if (notas[i][2] > maior) {
+				maior = notas[i][2];
+				MaiorMedia = nome[i];
+				
+			}
 		}
+		System.out.println("O aluno com a maior média é " + MaiorMedia + " -> " + maior);
+		return notas;
 	}
-	
+
+	public static double [][] MenorMedia(double[][] notas, String[] nome, double menor, String MenorMedia) {
+		for (int i = 0; i < notas.length; i++) {
+			if (notas[i][2] < menor) {
+				menor = notas[i][2];
+				MenorMedia = nome[i];
+			}
+		}
+		System.out.println("O aluno com menor média é " + MenorMedia + " -> " + menor);
 	return notas;
-}
-public static void maiorMedia (String[][]nomes){
-	double maMedia=0;
-	String mAluno=null;
-	System.out.println(" A maior media é: "+maMedia+" do aluno "+mAluno);
-}
-public static void menorMedia(String[][]nomes){
-	double meMedia=0;
-	String pAluno=null;
-	System.out.println(" A menor média é: "+meMedia+" do aluno "+pAluno);
-}
+	}
+
 }
